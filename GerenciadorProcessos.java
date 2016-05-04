@@ -11,6 +11,23 @@ public class GerenciadorProcessos {
     criaListaProcessos();
   }
 
+  public void adicionarProcesso(Processo processo){
+    listaProcessos.add(processo);
+    setPrimeiro(listaProcessos.get(0).getId());
+    setUltimo(listaProcessos.get(listaProcessos.size() - 1).getId());
+
+    // verificaProximo(processo);
+
+    System.out.println("Primeiro lista: " + getPrimeiro());
+    System.out.println("Ultimo lista: " + getUltimo());
+  }
+
+  // TODO adicionar o id deste processo no próximo do processo anterior a ele na lista
+  public void verificaProximo(Processo processo) {
+    if(listaProcessos.size() > 1) {
+    }
+  }
+
   public int getPrimeiro(){
     return this.primeiro;
   }
