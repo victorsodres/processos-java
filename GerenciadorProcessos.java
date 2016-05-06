@@ -9,6 +9,13 @@ public class GerenciadorProcessos {
 
   public GerenciadorProcessos(){
     criaListaProcessos();
+
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        checarProcessosParados();
+      }
+    }).start();
   }
 
   public void adicionarProcesso(Processo processo){
@@ -26,6 +33,28 @@ public class GerenciadorProcessos {
     if(listaProcessos.size() > 1) {
       Processo pAnterior = listaProcessos.get(listaProcessos.size() - 2);
       pAnterior.setProximo(processo.getId());
+    }
+  }
+
+  //FIXME Ajustar a impressão e antes de remover o processo parado, tem que colocar
+  // no início e pegar o indicador de próximo dele e passar para o processo que era o anterior a ele
+  public void checarProcessosParados(){
+    Processo p = null;
+    boolean excluir = false;
+    while(listaProcessos != null) {
+      System.out.print("\r>> Processos na lista: " + listaProcessos.size());
+
+      for (int i = 0; i < listaProcessos.size(); i++) {
+        p = listaProcessos.get(i);
+        if (Estado.TERMINATED.equals(p.getEstado())) {
+          System.out.println(" >>> REMOVIDO: " + p.getId());
+          listaProcessos.remove(i);
+          excluir = true;
+        }
+      }
+
+      if(listaProcessos.size() == 0 && excluir)
+        listaProcessos = null;
     }
   }
 
