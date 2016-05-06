@@ -1,14 +1,15 @@
 import java.util.Date;
+import java.util.UUID;
 
 public class Processo {
 
   private Estado estado;
-  private int id;
+  private long id;
   private String conteudo;
-  private int proximo;
+  private long proximo;
 
   public Processo(String conteudo){
-    this.id = (int) new Date().getTime();
+    this.id = Math.abs(UUID.randomUUID().hashCode());
     this.estado = Estado.NEW;
     this.conteudo = conteudo;
 
@@ -21,7 +22,7 @@ public class Processo {
   }
 
   public void processar() {
-    System.out.println("Processo "+ this.id +" executando...");
+    System.out.println("==== PID: "+ this.id +" STARTED =====");
     imprimirEstado();
 
     while(this.estado != Estado.TERMINATED) {
@@ -47,11 +48,12 @@ public class Processo {
       sleep();
     }
     imprimirEstado();
-    System.out.println("<------------------------->");
+    // System.out.println("<------------- "+ this.id +" ------------>");
   }
 
   public void imprimirEstado(){
     System.out.println("ID: " + this.id + " | STATE: " + this.estado);
+    // System.out.print("\r======= " + this.estado);
   }
 
   public void sleep(){
@@ -95,19 +97,20 @@ public class Processo {
     this.conteudo = conteudo;
   }
 
-  public int getProximo(){
+  public long getProximo(){
     return this.proximo;
   }
 
-  public void setProximo(int proximo){
+  public void setProximo(long proximo){
+    System.out.println("PID: " + this.id + " --> Next PID: " + proximo);
     this.proximo = proximo;
   }
 
-  public int getId(){
+  public long getId(){
     return this.id;
   }
 
-  public void setId(int id){
+  public void setId(long id){
     this.id = id;
   }
 
