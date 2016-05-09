@@ -20,9 +20,6 @@ public class ProcessosMain {
     Timer timer = new Timer();
     timer.schedule(gp, 0, 100);
 
-
-
-
   }
 
 }

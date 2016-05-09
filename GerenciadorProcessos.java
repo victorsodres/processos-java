@@ -14,9 +14,7 @@ public class GerenciadorProcessos extends TimerTask {
     new Thread(new Runnable() {
       @Override
       public void run() {
-        //checarProcessosParados();
-        // limparConsole();
-        // imprimirProcessos();
+        checarProcessosParados();
       }
     }).start();
   }
@@ -125,19 +123,19 @@ public class GerenciadorProcessos extends TimerTask {
     Processo p = null;
     boolean excluir = false;
     while(listaProcessos != null) {
-      System.out.print("\r>> Processos na lista: " + listaProcessos.size());
+      //System.out.print("\r>> Processos na lista: " + listaProcessos.size());
 
       for (int i = 0; i < listaProcessos.size(); i++) {
         p = listaProcessos.get(i);
         if (Estado.TERMINATED.equals(p.getEstado())) {
-          System.out.println(" >>> REMOVIDO: " + p.getId());
+          //System.out.println(" >>> REMOVIDO: " + p.getId());
           listaProcessos.remove(i);
           excluir = true;
         }
       }
 
-      if(listaProcessos.size() == 0 && excluir)
-        listaProcessos = null;
+      // if(listaProcessos.size() == 0 && excluir)
+      //   listaProcessos = null;
     }
   }
 
