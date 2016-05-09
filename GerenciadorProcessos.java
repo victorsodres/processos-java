@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.ArrayList;
 import java.util.TimerTask;
+import java.util.Iterator;
 
 public class GerenciadorProcessos extends TimerTask {
 
@@ -48,10 +49,13 @@ public class GerenciadorProcessos extends TimerTask {
   }
 
   private List<Processo> ordenarListaLigada(List<Processo> lista){
-
     List<Processo> newList = new ArrayList<Processo>();
-    newList.add(findProcesso(lista, primeiro));
-    newList = adicionaProximo(newList);
+
+    if(lista.size() > 0){
+      newList.add(findProcesso(lista, primeiro));
+      newList = adicionaProximo(newList);
+    }
+
     return newList;
   }
 
@@ -81,29 +85,40 @@ public class GerenciadorProcessos extends TimerTask {
 
     //Primeira linha
     for(Processo proc: lista ){
-      print("|===================|");
+      if(!Estado.TERMINATED.equals(proc.getEstado())){
+        print("|===================|");
+      }
     }
 
     print("\n");
 
     for(Processo proc: lista){
-      print("|");
-      print(completarString(19, "ID: " + proc.getId()));
-      print("|");
+      if(!Estado.TERMINATED.equals(proc.getEstado()))
+      {
+        print("|");
+        print(completarString(19, "ID: " + proc.getId()));
+        print("|");
+      }
     }
 
     print("\n");
 
     for(Processo proc: lista){
+      if(!Estado.TERMINATED.equals(proc.getEstado()))
+      {
       print("|");
       print(completarString(19, "ESTADO: " + proc.getEstado()));
       print("|");
+      }
     }
 
     print("\n");
 
     for(Processo proc: lista ){
+      if(!Estado.TERMINATED.equals(proc.getEstado()))
+      {
       print("|===================|");
+    }
     }
 
     print("\n");
@@ -120,24 +135,16 @@ public class GerenciadorProcessos extends TimerTask {
   //FIXME Ajustar a impressão e antes de remover o processo parado, tem que colocar
   // no início e pegar o indicador de próximo dele e passar para o processo que era o anterior a ele
   public void checarProcessosParados(){
-    Processo p = null;
-    boolean excluir = false;
     while(listaProcessos != null) {
-      //System.out.print("\r>> Processos na lista: " + listaProcessos.size());
-
-      for (int i = 0; i < listaProcessos.size(); i++) {
-        p = listaProcessos.get(i);
+      for (Iterator<Processo> iter = listaProcessos.listIterator(); iter.hasNext(); ) {
+        Processo p = iter.next();
         if (Estado.TERMINATED.equals(p.getEstado())) {
-          //System.out.println(" >>> REMOVIDO: " + p.getId());
-          listaProcessos.remove(i);
-          excluir = true;
+            iter.remove();
         }
       }
-
-      // if(listaProcessos.size() == 0 && excluir)
-      //   listaProcessos = null;
     }
   }
+
 
   public long getPrimeiro(){
     return this.primeiro;
