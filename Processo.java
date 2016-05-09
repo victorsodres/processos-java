@@ -22,8 +22,8 @@ public class Processo {
   }
 
   public void processar() {
-    System.out.println("==== PID: "+ this.id +" STARTED =====");
-    imprimirEstado();
+    //System.out.println("==== PID: "+ this.id +" STARTED =====");
+    //imprimirEstado();
 
     while(this.estado != Estado.TERMINATED) {
       switch(this.estado){
@@ -31,15 +31,15 @@ public class Processo {
           this.estado = Estado.READY;
           break;
         case READY:
-          imprimirEstado();
+          // imprimirEstado();
           this.estado = Estado.RUNNING;
           break;
         case RUNNING:
-          imprimirEstado();
+          // imprimirEstado();
           this.estado = randomState();
           break;
         case WAITING:
-          imprimirEstado();
+          // imprimirEstado();
           this.estado = Estado.READY;
           break;
         default:
@@ -47,7 +47,7 @@ public class Processo {
       }
       sleep();
     }
-    imprimirEstado();
+    //imprimirEstado();
     // System.out.println("<------------- "+ this.id +" ------------>");
   }
 
@@ -102,7 +102,7 @@ public class Processo {
   }
 
   public void setProximo(long proximo){
-    System.out.println("PID: " + this.id + " --> Next PID: " + proximo);
+    //System.out.println("PID: " + this.id + " --> Next PID: " + proximo);
     this.proximo = proximo;
   }
 

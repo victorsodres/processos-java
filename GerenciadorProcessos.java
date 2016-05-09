@@ -1,7 +1,8 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.TimerTask;
 
-public class GerenciadorProcessos {
+public class GerenciadorProcessos extends TimerTask {
 
   private long primeiro;
   private long ultimo;
@@ -13,9 +14,20 @@ public class GerenciadorProcessos {
     new Thread(new Runnable() {
       @Override
       public void run() {
-        checarProcessosParados();
+        //checarProcessosParados();
+        // limparConsole();
+        // imprimirProcessos();
       }
     }).start();
+  }
+
+  public void run(){
+    limparConsole();
+    imprimirProcessos();
+  }
+
+  private void limparConsole(){
+    System.out.print("\033[H\033[2J");
   }
 
   public void adicionarProcesso(Processo processo){
@@ -25,7 +37,7 @@ public class GerenciadorProcessos {
 
     verificaProximo(processo);
 
-    System.out.println("Primeiro lista: " + getPrimeiro() + " - Último lista: " + getUltimo());
+    //System.out.println("Primeiro lista: " + getPrimeiro() + " - Último lista: " + getUltimo());
   }
 
   // TODO adicionar o id deste processo no próximo do processo anterior a ele na lista
@@ -34,6 +46,45 @@ public class GerenciadorProcessos {
       Processo pAnterior = listaProcessos.get(listaProcessos.size() - 2);
       pAnterior.setProximo(processo.getId());
     }
+  }
+
+  public void imprimirProcessos(){
+    //Primeira linha
+    for(Processo proc: listaProcessos ){
+      print("|==================================|");
+    }
+
+    print("\n");
+
+    for(Processo proc: listaProcessos){
+      print("|");
+      print(completarString(34, "ID: " + proc.getId()));
+      print("|");
+    }
+
+    print("\n");
+
+    for(Processo proc: listaProcessos){
+      print("|");
+      print(completarString(34, "ESTADO: " + proc.getEstado()));
+      print("|");
+    }
+
+    print("\n");
+
+    for(Processo proc: listaProcessos ){
+      print("|==================================|");
+    }
+
+    print("\n");
+  }
+
+  private void print(String str){
+    System.out.print(str);
+  }
+
+  private String completarString(Integer qtd, String str){
+    return String.format("%-" + qtd + "s", str);
   }
 
   //FIXME Ajustar a impressão e antes de remover o processo parado, tem que colocar
