@@ -23,7 +23,8 @@ public class GerenciadorProcessos extends TimerTask {
 
   public void run(){
     limparConsole();
-    imprimirProcessos();
+    List<Processo> listaOrdenada = ordenarListaLigada(listaProcessos);
+    imprimirProcessos(listaOrdenada);
   }
 
   private void limparConsole(){
@@ -48,15 +49,46 @@ public class GerenciadorProcessos extends TimerTask {
     }
   }
 
-  public void imprimirProcessos(){
+  private List<Processo> ordenarListaLigada(List<Processo> lista){
+
+    List<Processo> newList = new ArrayList<Processo>();
+    newList.add(findProcesso(lista, primeiro));
+    newList = adicionaProximo(newList);
+    return newList;
+  }
+
+  private List<Processo> adicionaProximo(List<Processo> lista){
+    long nextId = lista.get(lista.size() -1).getProximo();
+
+    if(nextId == 0)
+      return lista;
+
+    lista.add(findProcesso(listaProcessos, nextId));
+    lista = adicionaProximo(lista);
+
+    return lista;
+
+  }
+
+  private Processo findProcesso(List<Processo> list, long id){
+    for(Processo proc: list){
+      if(proc.getId() == id)
+        return proc;
+    }
+
+    return null;
+  }
+
+  public void imprimirProcessos(List<Processo> lista){
+
     //Primeira linha
-    for(Processo proc: listaProcessos ){
+    for(Processo proc: lista ){
       print("|===================|");
     }
 
     print("\n");
 
-    for(Processo proc: listaProcessos){
+    for(Processo proc: lista){
       print("|");
       print(completarString(19, "ID: " + proc.getId()));
       print("|");
@@ -64,7 +96,7 @@ public class GerenciadorProcessos extends TimerTask {
 
     print("\n");
 
-    for(Processo proc: listaProcessos){
+    for(Processo proc: lista){
       print("|");
       print(completarString(19, "ESTADO: " + proc.getEstado()));
       print("|");
@@ -72,7 +104,7 @@ public class GerenciadorProcessos extends TimerTask {
 
     print("\n");
 
-    for(Processo proc: listaProcessos ){
+    for(Processo proc: lista ){
       print("|===================|");
     }
 
