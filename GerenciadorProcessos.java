@@ -51,14 +51,14 @@ public class GerenciadorProcessos extends TimerTask {
   public void imprimirProcessos(){
     //Primeira linha
     for(Processo proc: listaProcessos ){
-      print("|==================================|");
+      print("|===================|");
     }
 
     print("\n");
 
     for(Processo proc: listaProcessos){
       print("|");
-      print(completarString(34, "ID: " + proc.getId()));
+      print(completarString(19, "ID: " + proc.getId()));
       print("|");
     }
 
@@ -66,14 +66,14 @@ public class GerenciadorProcessos extends TimerTask {
 
     for(Processo proc: listaProcessos){
       print("|");
-      print(completarString(34, "ESTADO: " + proc.getEstado()));
+      print(completarString(19, "ESTADO: " + proc.getEstado()));
       print("|");
     }
 
     print("\n");
 
     for(Processo proc: listaProcessos ){
-      print("|==================================|");
+      print("|===================|");
     }
 
     print("\n");
