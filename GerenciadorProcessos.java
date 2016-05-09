@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.ArrayList;
 import java.util.TimerTask;
+import java.util.Iterator;
 
 public class GerenciadorProcessos extends TimerTask {
 
@@ -41,10 +42,14 @@ public class GerenciadorProcessos extends TimerTask {
     }
   }
 
-  private List<Processo> ordenarListaLigada(){
+  private List<Processo> ordenarListaLigada(List<Processo> lista){
     List<Processo> newList = new ArrayList<Processo>();
-    newList.add(findProcesso(primeiro));
-    newList = adicionaProximo(newList);
+
+    if(lista.size() > 0){
+      newList.add(findProcesso(lista, primeiro));
+      newList = adicionaProximo(newList);
+    }
+
     return newList;
   }
 
@@ -165,6 +170,7 @@ public class GerenciadorProcessos extends TimerTask {
     }
 
   }
+
 
   public long getPrimeiro(){
     return this.primeiro;
