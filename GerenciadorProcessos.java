@@ -46,7 +46,7 @@ public class GerenciadorProcessos extends TimerTask {
     List<Processo> newList = new ArrayList<Processo>();
 
     if(lista.size() > 0){
-      newList.add(findProcesso(lista, primeiro));
+      newList.add(findProcesso(primeiro));
       newList = adicionaProximo(newList);
     }
 
