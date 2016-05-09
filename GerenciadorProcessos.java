@@ -10,36 +10,30 @@ public class GerenciadorProcessos extends TimerTask {
 
   public GerenciadorProcessos(){
     criaListaProcessos();
-
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        checarProcessosParados();
-      }
-    }).start();
   }
 
+  //Comentei esse de lista ordenada pq o efeito acaba sendo o mesmo de só listar os processos
+  // Pra testar descomenta os dois juntos
   public void run(){
     limparConsole();
-    List<Processo> listaOrdenada = ordenarListaLigada(listaProcessos);
-    imprimirProcessos(listaOrdenada);
+    // List<Processo> listaOrdenada = ordenarListaLigada();
+    // imprimirProcessos(listaOrdenada);
+    imprimirProcessos(listaProcessos);
+    checarProcessosParados();
   }
 
   private void limparConsole(){
     System.out.print("\033[H\033[2J");
   }
 
-  public void adicionarProcesso(Processo processo){
+  public void adicionarProcesso(Processo processo) {
     listaProcessos.add(processo);
     setPrimeiro(listaProcessos.get(0).getId());
     setUltimo(listaProcessos.get(listaProcessos.size() - 1).getId());
 
     verificaProximo(processo);
-
-    //System.out.println("Primeiro lista: " + getPrimeiro() + " - Último lista: " + getUltimo());
   }
 
-  // TODO adicionar o id deste processo no próximo do processo anterior a ele na lista
   public void verificaProximo(Processo processo) {
     if(listaProcessos.size() > 1) {
       Processo pAnterior = listaProcessos.get(listaProcessos.size() - 2);
@@ -47,10 +41,9 @@ public class GerenciadorProcessos extends TimerTask {
     }
   }
 
-  private List<Processo> ordenarListaLigada(List<Processo> lista){
-
+  private List<Processo> ordenarListaLigada(){
     List<Processo> newList = new ArrayList<Processo>();
-    newList.add(findProcesso(lista, primeiro));
+    newList.add(findProcesso(primeiro));
     newList = adicionaProximo(newList);
     return newList;
   }
@@ -61,18 +54,25 @@ public class GerenciadorProcessos extends TimerTask {
     if(nextId == 0)
       return lista;
 
-    lista.add(findProcesso(listaProcessos, nextId));
+    lista.add(findProcesso(nextId));
     lista = adicionaProximo(lista);
 
     return lista;
 
   }
 
-  private Processo findProcesso(List<Processo> list, long id){
-    for(Processo proc: list){
+  private Processo findProcesso(long id){
+    for(Processo proc: listaProcessos)
       if(proc.getId() == id)
         return proc;
-    }
+
+    return null;
+  }
+
+  private Processo findProcessoByProximo(long idProximo){
+    for(Processo proc: listaProcessos)
+      if(proc.getProximo() == idProximo)
+        return proc;
 
     return null;
   }
@@ -86,21 +86,39 @@ public class GerenciadorProcessos extends TimerTask {
 
     print("\n");
 
-    for(Processo proc: lista){
-      print("|");
-      print(completarString(19, "ID: " + proc.getId()));
-      print("|");
+    //Atributos
+
+    for(int i = 0; i < lista.size(); i++){
+      imprimirAttrs("POS", String.valueOf(i));
     }
 
     print("\n");
 
     for(Processo proc: lista){
-      print("|");
-      print(completarString(19, "ESTADO: " + proc.getEstado()));
-      print("|");
+      imprimirAttrs("ID", String.valueOf(proc.getId()));
     }
 
     print("\n");
+
+    for(Processo proc: lista){
+      imprimirAttrs("ESTADO", proc.getEstado().toString());
+    }
+
+    print("\n");
+
+    for(Processo proc: lista){
+      imprimirAttrs("PROXIMO", String.valueOf(proc.getProximo()));
+    }
+
+    // print("\n");
+    //
+    // for(Processo proc: lista){
+    //   imprimirAttrs("CONTEUDO", proc.getConteudo());
+    // }
+
+    print("\n");
+
+    //Ultima Linha
 
     for(Processo proc: lista ){
       print("|===================|");
@@ -113,30 +131,39 @@ public class GerenciadorProcessos extends TimerTask {
     System.out.print(str);
   }
 
+  private void imprimirAttrs(String tipo, String valor){
+    print("|");
+    print(completarString(19, String.format("%s: %s", tipo, valor)));
+    print("|");
+  }
+
   private String completarString(Integer qtd, String str){
     return String.format("%-" + qtd + "s", str);
   }
 
-  //FIXME Ajustar a impressão e antes de remover o processo parado, tem que colocar
-  // no início e pegar o indicador de próximo dele e passar para o processo que era o anterior a ele
+  /**
+  * Ação: Quando um processo (B) for terminado, o anterior a ele (A) receberá o ID do próximo (C)
+  * para que ele (B) possa ser removido da lista.
+  *
+  * obs. Coloquei o estado DEAD em vez de remover apenas para a visibilidade
+  * quando for impresso os processos.
+  */
   public void checarProcessosParados(){
     Processo p = null;
-    boolean excluir = false;
-    while(listaProcessos != null) {
-      //System.out.print("\r>> Processos na lista: " + listaProcessos.size());
 
-      for (int i = 0; i < listaProcessos.size(); i++) {
-        p = listaProcessos.get(i);
-        if (Estado.TERMINATED.equals(p.getEstado())) {
-          //System.out.println(" >>> REMOVIDO: " + p.getId());
-          listaProcessos.remove(i);
-          excluir = true;
-        }
+    for (int i = 0; i < listaProcessos.size(); i++) {
+      p = listaProcessos.get(i);
+      if (Estado.TERMINATED.equals(p.getEstado())) {
+        Processo pAnterior = findProcessoByProximo(p.getId());
+        if(pAnterior != null)
+          pAnterior.setProximo(p.getProximo());
+        listaProcessos.remove(i);
+        p.setEstado(Estado.DEAD);
+        p.setProximo(0);
+        listaProcessos.add(0, p);
       }
-
-      // if(listaProcessos.size() == 0 && excluir)
-      //   listaProcessos = null;
     }
+
   }
 
   public long getPrimeiro(){

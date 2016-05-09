@@ -3,6 +3,8 @@ import java.util.UUID;
 
 public class Processo {
 
+  // Diminuir o tempo para demonstração
+  private final int TIME = 1000;
   private Estado estado;
   private long id;
   private String conteudo;
@@ -22,33 +24,25 @@ public class Processo {
   }
 
   public void processar() {
-    //System.out.println("==== PID: "+ this.id +" STARTED =====");
-    //imprimirEstado();
-
-    while(this.estado != Estado.TERMINATED) {
+    while(this.estado != Estado.TERMINATED || this.estado != Estado.DEAD) {
       switch(this.estado){
         case NEW:
           this.estado = Estado.READY;
           break;
         case READY:
-          // imprimirEstado();
           this.estado = Estado.RUNNING;
           break;
         case RUNNING:
-          // imprimirEstado();
           this.estado = randomState();
           break;
         case WAITING:
-          // imprimirEstado();
           this.estado = Estado.READY;
           break;
         default:
-          System.out.println("UNKNOWN STATE");
+          System.out.print("");
       }
       sleep();
     }
-    //imprimirEstado();
-    // System.out.println("<------------- "+ this.id +" ------------>");
   }
 
   public void imprimirEstado(){
@@ -58,7 +52,7 @@ public class Processo {
 
   public void sleep(){
     try {
-			Thread.sleep(500);
+			Thread.sleep(TIME);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -102,7 +96,6 @@ public class Processo {
   }
 
   public void setProximo(long proximo){
-    //System.out.println("PID: " + this.id + " --> Next PID: " + proximo);
     this.proximo = proximo;
   }
 
