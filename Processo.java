@@ -1,14 +1,22 @@
 import java.util.Date;
 import java.util.UUID;
+import java.util.TimerTask;
+import java.util.Timer;
 
 public class Processo {
 
   // Diminuir o tempo para demonstração
-  private final int TIME = 1000;
+  private final int TIME = 3000;
   private Estado estado;
   private long id;
   private String conteudo;
   private long proximo;
+
+  // public void run(){
+  //   if(!Estado.TERMINATED.equals(estado)){
+  //     MandarMensagem();
+  //   }
+  // }
 
   public Processo(String conteudo){
     this.id = Math.abs(UUID.randomUUID().hashCode());
@@ -21,6 +29,14 @@ public class Processo {
         processar();
       }
     }).start();
+
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        MandarMensagem();
+      }
+    }).start();
+
   }
 
   public void processar() {
@@ -105,6 +121,15 @@ public class Processo {
 
   public void setId(long id){
     this.id = id;
+  }
+
+  public void MandarMensagem(){
+    SharedMemory.getInstance().addMessage(new Message(this.conteudo, this.id, this.proximo));
+    try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
   }
 
 }

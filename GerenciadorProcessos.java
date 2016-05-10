@@ -89,6 +89,8 @@ public class GerenciadorProcessos extends TimerTask {
       print("|===================|");
     }
 
+    print("      ");
+    print("|===================|");
     print("\n");
 
     //Atributos
@@ -97,11 +99,21 @@ public class GerenciadorProcessos extends TimerTask {
       imprimirAttrs("POS", String.valueOf(i));
     }
 
+    print("      ");
+    print("|");
+    print(completarString(19, "SHARED"));
+    print("|");
+
     print("\n");
 
     for(Processo proc: lista){
       imprimirAttrs("ID", String.valueOf(proc.getId()));
     }
+
+    print("      ");
+    print("|");
+    print(completarString(19, "Msg: " + SharedMemory.getInstance().getMessage().getConteudo()));
+    print("|");
 
     print("\n");
 
@@ -109,11 +121,21 @@ public class GerenciadorProcessos extends TimerTask {
       imprimirAttrs("ESTADO", proc.getEstado().toString());
     }
 
+    print("      ");
+    print("|");
+    print(completarString(19, "R: " + SharedMemory.getInstance().getMessage().getRemetente()));
+    print("|");
+
     print("\n");
 
     for(Processo proc: lista){
       imprimirAttrs("PROXIMO", String.valueOf(proc.getProximo()));
     }
+
+    print("      ");
+    print("|");
+    print(completarString(19, "D: " + SharedMemory.getInstance().getMessage().getDestinatario()));
+    print("|");
 
     // print("\n");
     //
@@ -128,6 +150,10 @@ public class GerenciadorProcessos extends TimerTask {
     for(Processo proc: lista ){
       print("|===================|");
     }
+
+    print("      ");
+    print("|===================|");
+    
 
     print("\n");
   }

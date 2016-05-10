@@ -9,16 +9,16 @@ public class ProcessosMain {
     System.out.print("\033[H\033[2J");
 
     GerenciadorProcessos gp = new GerenciadorProcessos();
-    
-    gp.adicionarProcesso(new Processo("Conteudo sensacional"));
-    gp.adicionarProcesso(new Processo("Conteudo da huea"));
-    gp.adicionarProcesso(new Processo("Hauihdas"));
-    gp.adicionarProcesso(new Processo("Testinho "));
-    gp.adicionarProcesso(new Processo("Hahhah muito teste"));
+
+    gp.adicionarProcesso(new Processo("msg1"));
+    gp.adicionarProcesso(new Processo("msg2"));
+    gp.adicionarProcesso(new Processo("msg3"));
+    gp.adicionarProcesso(new Processo("msg4"));
+    gp.adicionarProcesso(new Processo("msg5"));
 
 
     Timer timer = new Timer();
-    timer.schedule(gp, 0, 500);
+    timer.schedule(gp, 0, 100);
 
   }
 
