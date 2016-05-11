@@ -2,11 +2,12 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.TimerTask;
 import java.util.Timer;
+import java.util.List;
 
 public class Processo {
 
   // Diminuir o tempo para demonstração
-  private final int TIME = 3000;
+  private final int TIME = 1000;
   private Estado estado;
   private long id;
   private String conteudo;
@@ -30,12 +31,12 @@ public class Processo {
       }
     }).start();
 
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        MandarMensagem();
-      }
-    }).start();
+    // new Thread(new Runnable() {
+    //   @Override
+    //   public void run() {
+    //
+    //   }
+    // }).start();
 
   }
 
@@ -49,6 +50,15 @@ public class Processo {
           this.estado = Estado.RUNNING;
           break;
         case RUNNING:
+          if (randomNumber(100) < 50 && this.conteudo.isEmpty()) {
+            List<Message> list = SharedMemory.getInstance().getListaMensagens();
+            if(list.size() > 0){
+              int n = randomNumber(list.size()-1);
+              this.conteudo = SharedMemory.getInstance().getAndRemoveMessage(n).getConteudo();
+            }
+          } else {
+            mandarMensagem();
+          }
           this.estado = randomState();
           break;
         case WAITING:
@@ -75,7 +85,7 @@ public class Processo {
   }
 
   public Estado randomState() {
-    int n = randomNumber();
+    int n = randomNumber(4);
 
     if(n == 1 || n == 3 || n == 4)
       return Estado.values()[n];
@@ -83,8 +93,8 @@ public class Processo {
       return randomState();
   }
 
-  public int randomNumber(){
-    return Integer.parseInt(String.valueOf(Math.round(Math.random() * 4)));
+  public int randomNumber(int number){
+    return Integer.parseInt(String.valueOf(Math.round(Math.random() * number)));
   }
 
   public void enviarMensagem(int idProcesso){
@@ -123,13 +133,11 @@ public class Processo {
     this.id = id;
   }
 
-  public void MandarMensagem(){
-    SharedMemory.getInstance().addMessage(new Message(this.conteudo, this.id, this.proximo));
-    try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+  public void mandarMensagem(){
+    if(this.conteudo != null && !this.conteudo.isEmpty()){
+      SharedMemory.getInstance().addMessage(new Message(this.conteudo));
+      this.conteudo = "";
+    }
   }
 
 }

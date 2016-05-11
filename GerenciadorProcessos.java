@@ -8,6 +8,8 @@ public class GerenciadorProcessos extends TimerTask {
   private long primeiro;
   private long ultimo;
   private List<Processo> listaProcessos;
+  private List<Processo> listaProcessosMortos;
+  private SharedMemory sharedMemory = SharedMemory.getInstance();
 
   public GerenciadorProcessos(){
     criaListaProcessos();
@@ -19,7 +21,11 @@ public class GerenciadorProcessos extends TimerTask {
     limparConsole();
     // List<Processo> listaOrdenada = ordenarListaLigada();
     // imprimirProcessos(listaOrdenada);
+    print("\n>>> RUNNING\n");
     imprimirProcessos(listaProcessos);
+    print("\n\n>>> DEAD\n");
+    imprimirProcessos(listaProcessosMortos);
+    imprimirSharedMemory();
     checarProcessosParados();
   }
 
@@ -82,15 +88,25 @@ public class GerenciadorProcessos extends TimerTask {
     return null;
   }
 
+  public void imprimirSharedMemory(){
+    print("\n\n");
+    print("|===================|");
+    print("\n");
+    imprimirAttrs("MEMORY", "SHARED");
+
+    for(Message msg: sharedMemory.getListaMensagens()){
+      if(msg.getConteudo() != "")
+        print("\n|" + completarString(19, "- " + msg.getConteudo()) + "|");
+    }
+    print("\n|===================|");
+  }
+
   public void imprimirProcessos(List<Processo> lista){
 
     //Primeira linha
     for(Processo proc: lista ){
       print("|===================|");
     }
-
-    print("      ");
-    print("|===================|");
     print("\n");
 
     //Atributos
@@ -98,51 +114,26 @@ public class GerenciadorProcessos extends TimerTask {
     for(int i = 0; i < lista.size(); i++){
       imprimirAttrs("POS", String.valueOf(i));
     }
-
-    print("      ");
-    print("|");
-    print(completarString(19, "SHARED"));
-    print("|");
-
     print("\n");
 
     for(Processo proc: lista){
       imprimirAttrs("ID", String.valueOf(proc.getId()));
     }
-
-    print("      ");
-    print("|");
-    print(completarString(19, "Msg: " + SharedMemory.getInstance().getMessage().getConteudo()));
-    print("|");
-
     print("\n");
 
     for(Processo proc: lista){
       imprimirAttrs("ESTADO", proc.getEstado().toString());
     }
+    print("\n");
 
-    print("      ");
-    print("|");
-    print(completarString(19, "R: " + SharedMemory.getInstance().getMessage().getRemetente()));
-    print("|");
-
+    for(Processo proc: lista){
+      imprimirAttrs("CONTEUDO", proc.getConteudo());
+    }
     print("\n");
 
     for(Processo proc: lista){
       imprimirAttrs("PROXIMO", String.valueOf(proc.getProximo()));
     }
-
-    print("      ");
-    print("|");
-    print(completarString(19, "D: " + SharedMemory.getInstance().getMessage().getDestinatario()));
-    print("|");
-
-    // print("\n");
-    //
-    // for(Processo proc: lista){
-    //   imprimirAttrs("CONTEUDO", proc.getConteudo());
-    // }
-
     print("\n");
 
     //Ultima Linha
@@ -150,11 +141,6 @@ public class GerenciadorProcessos extends TimerTask {
     for(Processo proc: lista ){
       print("|===================|");
     }
-
-    print("      ");
-    print("|===================|");
-    
-
     print("\n");
   }
 
@@ -162,7 +148,7 @@ public class GerenciadorProcessos extends TimerTask {
     System.out.print(str);
   }
 
-  private void imprimirAttrs(String tipo, String valor){
+  private void imprimirAttrs(String tipo, String valor) {
     print("|");
     print(completarString(19, String.format("%s: %s", tipo, valor)));
     print("|");
@@ -189,14 +175,13 @@ public class GerenciadorProcessos extends TimerTask {
         if(pAnterior != null)
           pAnterior.setProximo(p.getProximo());
         listaProcessos.remove(i);
+        p.mandarMensagem();
         p.setEstado(Estado.DEAD);
-        p.setProximo(0);
-        listaProcessos.add(0, p);
+        // p.setProximo(0);
+        listaProcessosMortos.add(0, p);
       }
     }
-
   }
-
 
   public long getPrimeiro(){
     return this.primeiro;
@@ -220,6 +205,7 @@ public class GerenciadorProcessos extends TimerTask {
 
   public List<Processo> criaListaProcessos(){
     this.listaProcessos = new ArrayList<Processo>();
+    this.listaProcessosMortos = new ArrayList<Processo>();
     return this.listaProcessos;
   }
 }
